@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLog;
-import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.ConnectionsManager;
@@ -118,7 +117,7 @@ public final class PociGramLiveLastNameManager {
             TLRPC.User current = UserConfig.getInstance(account).getCurrentUser();
             if (current != null) {
                 current.last_name = newName;
-                MessagesController.getInstance(account).putUser(current, false);
+                UserConfig.getInstance(account).saveConfig(false);
                 NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.updateInterfaces, 1);
                 lastAppliedName = newName;
             }
