@@ -41,7 +41,6 @@ public final class PociGramLocalMessageEdits {
         CharSequence original = originals.get(message);
         if (original != null) {
             message.messageText = original;
-            message.messageTextShort = original;
         }
     }
 
@@ -53,12 +52,10 @@ public final class PociGramLocalMessageEdits {
         String replacement = preferences().getString(key(message), null);
         if (replacement != null) {
             message.messageText = replacement;
-            message.messageTextShort = replacement;
         } else {
             CharSequence original = originals.get(message);
             if (original != null) {
                 message.messageText = original;
-                message.messageTextShort = original;
             }
         }
     }
