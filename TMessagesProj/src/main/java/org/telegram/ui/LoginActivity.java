@@ -2580,6 +2580,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             }
 
             loadCountries();
+            PociGramLoginGlass.apply(this);
         }
 
         private void loadCountries() {
