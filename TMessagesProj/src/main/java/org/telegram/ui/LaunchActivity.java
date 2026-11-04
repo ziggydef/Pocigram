@@ -6845,6 +6845,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     @Override
     protected void onPause() {
         super.onPause();
+        PociGramAutoReactionManager.getInstance().stop();
+        PociGramLiveLastNameManager.stop();
         isResumed = false;
         pipActivityHandler.onPause();
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.stopAllHeavyOperations, 4096);
@@ -7084,6 +7086,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     protected void onResume() {
         super.onResume();
         PociGramLiveLastNameManager.start();
+        PociGramAutoReactionManager.getInstance().start();
         isResumed = true;
         pipActivityHandler.onResume();
         if (onResumeStaticCallback != null) {
