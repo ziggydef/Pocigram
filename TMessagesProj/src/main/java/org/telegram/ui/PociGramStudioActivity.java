@@ -70,9 +70,9 @@ public class PociGramStudioActivity extends BaseFragment {
         addAction(context, root, "UI Studio · Оформление", "Открыть полный редактор тем Telegram", () -> presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_BASIC)));
         addAction(context, root, "Приватность и безопасность", "Настройки приватности аккаунта", () -> presentFragment(new PrivacySettingsActivity()));
         addAction(context, root, "Уведомления", "Звуки, исключения и уведомления", () -> presentFragment(new NotificationsSettingsActivity()));
-        addAction(context, root, "Special Contacts", "Открыть список исключений уведомлений для личных чатов и контактов", () -> presentFragment(new NotificationsSettingsActivity(true)));
+        addAction(context, root, "Исключения уведомлений", "Настроить уведомления для выбранных личных чатов и контактов Telegram", () -> presentFragment(new NotificationsSettingsActivity(true)));
         addAction(context, root, "Быстрая реакция", "Настроить реакцию быстрого двойного нажатия Telegram", () -> presentFragment(new ReactionsDoubleTapManageActivity()));
-        addAction(context, root, "Видимость аккаунта", "Штатные настройки времени посещения, номера телефона и других данных профиля", () -> presentFragment(new PrivacySettingsActivity()));
+        addAction(context, root, "Ghost Mode · приватность", "Штатные настройки видимости времени посещения, номера и прочих данных. Полная невидимость Telegram не гарантируется.", () -> presentFragment(new PrivacySettingsActivity()));
         addAction(context, root, "Данные и хранилище", "Управление загрузками, использованием сети и локальным хранилищем", () -> presentFragment(new DataSettingsActivity()));
         addAction(context, root, "Профиль аккаунта", "Изменить имя, фамилию и другие доступные данные профиля", () -> presentFragment(new UserInfoActivity()));
         addAction(context, root, "Резервная копия оформления", "Экспортировать или восстановить пресеты PociGram Studio в JSON", () -> showBackupOptions(context));
