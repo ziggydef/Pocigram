@@ -2,18 +2,6 @@ name: Pocigram Android Build
 
 'on':
   workflow_dispatch:
-  push:
-    branches:
-      - ziggy-dev
-    paths:
-      - '.github/workflows/android-build.yml'
-      - 'TMessagesProj/**'
-      - 'TMessagesProj_App/**'
-      - 'TMessagesProj_Modules/**'
-      - 'build.gradle'
-      - 'settings.gradle'
-      - 'gradle.properties'
-      - 'buildSrc/**'
 
 concurrency:
   group: pocigram-android-${{ github.ref }}
@@ -50,10 +38,10 @@ jobs:
       - name: Install Android dependencies
         shell: bash
         run: |
-          sdkmanager --install \
-            "platforms;android-36" \
-            "build-tools;36.0.0" \
-            "ndk;27.2.12479018" \
+          sdkmanager --install \\
+            "platforms;android-36" \\
+            "build-tools;36.0.0" \\
+            "ndk;27.2.12479018" \\
             "cmake;3.22.1"
 
       - name: Setup Gradle
@@ -62,10 +50,10 @@ jobs:
       - name: Build Pocigram
         run: |
           chmod +x gradlew
-          ./gradlew :TMessagesProj_App:assembleAfatDebug \
-            --no-daemon \
-            --stacktrace \
-            --max-workers=2 \
+          ./gradlew :TMessagesProj_App:assembleAfatDebug \\
+            --no-daemon \\
+            --stacktrace \\
+            --max-workers=2 \\
             -Dorg.gradle.jvmargs="-Xmx5g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8"
 
       - name: Upload APK
