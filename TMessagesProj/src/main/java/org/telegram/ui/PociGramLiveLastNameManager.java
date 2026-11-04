@@ -39,8 +39,11 @@ public final class PociGramLiveLastNameManager {
         boolean wasEnabled = prefs.getBoolean("enabled", false);
         if (enabled && !wasEnabled) {
             TLRPC.User currentUser = UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser();
+            if (currentUser == null) {
+                return;
+            }
             prefs.edit()
-                    .putString("original_last_name", currentUser == null || currentUser.last_name == null ? "" : currentUser.last_name)
+                    .putString("original_last_name", currentUser.last_name == null ? "" : currentUser.last_name)
                     .putBoolean("original_saved", true)
                     .apply();
         }
@@ -141,7 +144,9 @@ public final class PociGramLiveLastNameManager {
         TL_account.updateProfile request = new TL_account.updateProfile();
         request.flags |= 2;
         request.last_name = original;
-        MessagesController.getInstance(account).getConnectionsManager().sendRequest(request, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
+        requestInFlight = true;
+        ConnectionsManager.getInstance(account).sendRequest(request, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
+            requestInFlight = false;
             if (error != null) {
                 FileLog.e("PociGram Live Last Name restore failed: " + error.text);
                 return;
@@ -149,7 +154,7 @@ public final class PociGramLiveLastNameManager {
             TLRPC.User current = UserConfig.getInstance(account).getCurrentUser();
             if (current != null) {
                 current.last_name = original;
-                MessagesController.getInstance(account).putUser(current, false);
+                UserConfig.getInstance(account).saveConfig(false);
                 NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.updateInterfaces, 1);
             }
             prefs.edit().remove("original_last_name").putBoolean("original_saved", false).apply();
