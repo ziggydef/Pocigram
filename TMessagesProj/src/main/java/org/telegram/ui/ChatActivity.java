@@ -33624,7 +33624,7 @@ public class ChatActivity extends BaseFragment implements
                 .setPositiveButton("Сохранить локально", (dialog, which) -> {
                     String value = editor.getText().toString();
                     if (value.trim().isEmpty() || value.length() > 4096) {
-                        BulletinFactory.of(this).createErrorBulletin("Текст должен содержать от 1 до 4096 символов").show();
+                        android.widget.Toast.makeText(getContext(), "Текст должен содержать от 1 до 4096 символов", android.widget.Toast.LENGTH_SHORT).show();
                         return;
                     }
                     PociGramLocalMessageEdits.save(target, value);
