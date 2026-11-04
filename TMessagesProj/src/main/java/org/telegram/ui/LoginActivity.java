@@ -1534,10 +1534,10 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             currentViewNum = page;
             backButtonView.setVisibility(newView.needBackButton() || newAccount ? View.VISIBLE : View.GONE);
 
-            PociGramLoginGlass.applyStage(newView);
             newView.setParams(params, false);
             setParentActivityTitle(newView.getHeaderName());
             newView.onShow();
+            PociGramLoginGlass.applyStage(newView);
             newView.setX(back ? -AndroidUtilities.displaySize.x : AndroidUtilities.displaySize.x);
             newView.setVisibility(View.VISIBLE);
 
@@ -1566,11 +1566,11 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             views[currentViewNum].setVisibility(View.GONE);
             views[currentViewNum].onHide();
             currentViewNum = page;
-            PociGramLoginGlass.applyStage(views[page]);
             views[page].setParams(params, false);
             views[page].setVisibility(View.VISIBLE);
             setParentActivityTitle(views[page].getHeaderName());
             views[page].onShow();
+            PociGramLoginGlass.applyStage(views[page]);
 
             setCustomKeyboardVisible(views[page].hasCustomKeyboard(), false);
         }
