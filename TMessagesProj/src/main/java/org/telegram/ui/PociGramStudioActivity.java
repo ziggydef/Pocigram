@@ -1,6 +1,8 @@
 package org.telegram.ui;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
@@ -8,11 +10,19 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
+
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import org.telegram.messenger.browser.Browser;
 
 public class PociGramStudioActivity extends BaseFragment {
@@ -62,6 +72,7 @@ public class PociGramStudioActivity extends BaseFragment {
         addAction(context, root, "Видимость аккаунта", "Штатные настройки времени посещения, номера телефона и других данных профиля", () -> presentFragment(new PrivacySettingsActivity()));
         addAction(context, root, "Данные и хранилище", "Управление загрузками, использованием сети и локальным хранилищем", () -> presentFragment(new DataSettingsActivity()));
         addAction(context, root, "Профиль аккаунта", "Изменить имя, фамилию и другие доступные данные профиля", () -> presentFragment(new UserInfoActivity()));
+        addAction(context, root, "Резервная копия оформления", "Экспортировать или восстановить пресеты PociGram Studio в JSON", () -> showBackupOptions(context));
         addAction(context, root, "Проверить обновления", "Открыть официальный список релизов PociGram", () -> Browser.openUrl(context, "https://github.com/ziggydef/Pocigram/releases"));
 
         TextView note = new TextView(context);
@@ -151,6 +162,7 @@ public class PociGramStudioActivity extends BaseFragment {
             Theme.setColor(Theme.key_switchTrackChecked, 0, true);
             Theme.setColor(Theme.key_progressCircle, 0, true);
         }
+        getStudioPreferences().edit().putInt("ui_preset", preset).apply();
         Theme.saveCurrentTheme(Theme.getCurrentTheme(), false, false, false);
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.didSetNewTheme, false, false);
     }
@@ -160,6 +172,7 @@ public class PociGramStudioActivity extends BaseFragment {
         Theme.setColor(Theme.key_chat_outBubbleGradient1, color, reset);
         Theme.setColor(Theme.key_chat_outBubbleGradient2, color, reset);
         Theme.setColor(Theme.key_chat_outBubbleGradient3, color, reset);
+        getStudioPreferences().edit().putInt("bubble_color", reset ? 0 : color).apply();
         Theme.saveCurrentTheme(Theme.getCurrentTheme(), false, false, false);
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.didSetNewTheme, false, false);
     }
