@@ -10753,7 +10753,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     }
                 }
                 infoStartRow = rowCount;
-                if (!isBot && (hasPhone || !hasInfo)) {
+                boolean hideOwnPhoneLocally = myProfile && ApplicationLoader.applicationContext.getSharedPreferences("pocigram_local_profile", android.content.Context.MODE_PRIVATE).getBoolean("hide_own_phone", false);
+                if (!isBot && (hasPhone || !hasInfo) && !hideOwnPhoneLocally) {
                     phoneRow = rowCount++;
                 }
                 if (userInfo != null && !TextUtils.isEmpty(userInfo.about)) {
