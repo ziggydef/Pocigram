@@ -62,6 +62,7 @@ public class PociGramStudioActivity extends BaseFragment {
         addAction(context, root, "UI Studio · Obsidian", "Графитовый интерфейс и приглушённые сообщения", () -> applyUiPreset(1));
         addAction(context, root, "UI Studio · Сброс", "Вернуть стандартные цвета текущей темы", () -> applyUiPreset(2));
         addAction(context, root, "Bubble Studio · Прозрачность", "Выбрать уровень прозрачности исходящих сообщений", () -> showBubbleOpacityOptions(context));
+        addAction(context, root, "Bubble Studio · Цвет", "Выбрать оттенок исходящих сообщений", () -> showBubbleColorOptions(context));
         addAction(context, root, "Bubble Studio · Glass Violet", "Полупрозрачный фиолетовый стиль исходящих сообщений", () -> applyBubblePreset(Color.argb(210, 76, 48, 112), false));
         addAction(context, root, "Bubble Studio · Obsidian", "Тёмный графитовый стиль исходящих сообщений", () -> applyBubblePreset(Color.argb(220, 35, 31, 45), false));
         addAction(context, root, "Bubble Studio · Сброс", "Вернуть цвета пузырей из текущей темы", () -> applyBubblePreset(0, true));
@@ -166,6 +167,22 @@ public class PociGramStudioActivity extends BaseFragment {
         getStudioPreferences().edit().putInt("ui_preset", preset).apply();
         Theme.saveCurrentTheme(Theme.getCurrentTheme(), false, false, false);
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.didSetNewTheme, false, false);
+    }
+
+    private void showBubbleColorOptions(Context context) {
+        CharSequence[] names = {"Ziggy Violet", "Obsidian", "Graphite", "Deep Blue", "Burgundy"};
+        int[] colors = {
+                Color.rgb(76, 48, 112),
+                Color.rgb(35, 31, 45),
+                Color.rgb(53, 51, 61),
+                Color.rgb(34, 55, 91),
+                Color.rgb(89, 39, 63)
+        };
+        new org.telegram.ui.ActionBar.AlertDialog.Builder(context)
+                .setTitle("Цвет пузырей")
+                .setItems(names, (dialog, which) -> applyBubbleColor(Color.argb(220, Color.red(colors[which]), Color.green(colors[which]), Color.blue(colors[which]))))
+                .setNegativeButton("Отмена", null)
+                .show();
     }
 
     private void showBubbleOpacityOptions(Context context) {
