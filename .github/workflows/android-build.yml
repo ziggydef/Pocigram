@@ -2,11 +2,6 @@ name: Pocigram Android Build
 
 'on':
   workflow_dispatch:
-  push:
-    branches:
-      - ziggy-dev
-    paths:
-      - '.github/workflows/final-build-trigger'
 
 concurrency:
   group: pocigram-android-${{ github.ref }}
