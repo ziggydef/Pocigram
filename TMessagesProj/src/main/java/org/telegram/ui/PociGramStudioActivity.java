@@ -65,6 +65,7 @@ public class PociGramStudioActivity extends BaseFragment {
         addAction(context, root, "Bubble Studio · Цвет", "Выбрать оттенок исходящих сообщений", () -> showBubbleColorOptions(context));
         addAction(context, root, "Bubble Studio · Glass Violet", "Полупрозрачный фиолетовый стиль исходящих сообщений", () -> applyBubblePreset(Color.argb(210, 76, 48, 112), false));
         addAction(context, root, "Bubble Studio · Obsidian", "Тёмный графитовый стиль исходящих сообщений", () -> applyBubblePreset(Color.argb(220, 35, 31, 45), false));
+        addAction(context, root, "Bubble Studio · Matte Obsidian", "Плотный матовый графит без прозрачности", () -> applyBubbleColor(Color.rgb(35, 31, 45)));
         addAction(context, root, "Bubble Studio · Сброс", "Вернуть цвета пузырей из текущей темы", () -> applyBubblePreset(0, true));
         addAction(context, root, "UI Studio · Оформление", "Открыть полный редактор тем Telegram", () -> presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_BASIC)));
         addAction(context, root, "Приватность и безопасность", "Настройки приватности аккаунта", () -> presentFragment(new PrivacySettingsActivity()));
