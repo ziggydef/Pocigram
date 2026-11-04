@@ -173,7 +173,11 @@ public class NotificationsSettingsActivity extends BaseFragment implements Notif
     @Override
     public boolean onFragmentCreate() {
         MessagesController.getInstance(currentAccount).loadSignUpNotificationsSettings();
-        loadExceptions(openPrivateExceptionsOnStart ? () -> presentFragment(new NotificationsCustomSettingsActivity(NotificationsController.TYPE_PRIVATE, exceptionUsers, null)) : null);
+        loadExceptions(openPrivateExceptionsOnStart ? () -> {
+            if (!isFinished && exceptionUsers != null) {
+                presentFragment(new NotificationsCustomSettingsActivity(NotificationsController.TYPE_PRIVATE, exceptionUsers, null));
+            }
+        } : null);
 
         if (UserConfig.getActivatedAccountsCount() > 1) {
             accountsSectionRow = rowCount++;
