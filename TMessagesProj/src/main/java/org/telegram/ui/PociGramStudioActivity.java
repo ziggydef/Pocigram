@@ -54,7 +54,6 @@ public class PociGramStudioActivity extends BaseFragment {
         addAction(context, root, "Special Contacts", "Открыть исключения уведомлений для отдельных чатов", () -> presentFragment(new NotificationsSettingsActivity()));
         addAction(context, root, "Quick Reactions", "Настроить реакцию быстрого двойного нажатия", () -> presentFragment(new ReactionsDoubleTapManageActivity()));
         addAction(context, root, "Ghost Mode · настройки", "Настроить видимость времени посещения и другие доступные параметры приватности", () -> presentFragment(new PrivacySettingsActivity()));
-        addAction(context, root, "Message Protection", "Открыть доступные настройки конфиденциальности и защиты чатов", () -> presentFragment(new PrivacySettingsActivity()));
         addAction(context, root, "Резервные копии и данные", "Открыть штатные настройки хранения и экспорта данных Telegram", () -> presentFragment(new DataSettingsActivity()));
         addAction(context, root, "Профиль аккаунта", "Открыть локальные настройки профиля Telegram", () -> presentFragment(new UserInfoActivity()));
         addAction(context, root, "Проверить обновления", "Открыть официальный список релизов PociGram", () -> Browser.openUrl(context, "https://github.com/ziggydef/Pocigram/releases"));
