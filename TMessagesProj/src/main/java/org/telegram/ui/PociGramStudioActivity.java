@@ -265,7 +265,7 @@ public class PociGramStudioActivity extends BaseFragment {
 
         new org.telegram.ui.ActionBar.AlertDialog.Builder(context)
                 .setTitle("Live Last Name")
-                .setMessage("Фамилия аккаунта будет обновляться на сервере каждую минуту. Изменение видно другим пользователям. При отключении PociGram попробует восстановить исходную фамилию. Обновления выполняются, пока приложение активно.")
+                .setMessage("Фамилия аккаунта будет обновляться на сервере каждую минуту. Изменение видно другим пользователям. При отключении PociGram попробует восстановить исходную фамилию. Обновления выполняются раз в минуту, пока процесс приложения работает; Android может ограничивать фоновые обновления.")
                 .setView(content)
                 .setPositiveButton("Включить / сохранить", (dialog, which) ->
                         PociGramLiveLastNameManager.configure(prefix.getText().toString(), suffix.getText().toString(), use24Hour.isChecked(), true))
