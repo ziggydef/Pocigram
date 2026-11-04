@@ -53,7 +53,7 @@ public final class PociGramLiveLastNameManager {
 
         if (!enabled) {
             stop();
-            if (wasEnabled) {
+            if (prefs.getBoolean("original_saved", false)) {
                 restoreOriginalName();
             }
         } else if (running) {
@@ -130,6 +130,10 @@ public final class PociGramLiveLastNameManager {
     private static void restoreOriginalName() {
         SharedPreferences prefs = preferences();
         if (!prefs.getBoolean("original_saved", false)) {
+            return;
+        }
+        if (requestInFlight) {
+            AndroidUtilities.runOnUIThread(PociGramLiveLastNameManager::restoreOriginalName, 1000);
             return;
         }
         int account = UserConfig.selectedAccount;
