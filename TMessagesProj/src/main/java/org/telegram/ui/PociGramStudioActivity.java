@@ -2,6 +2,7 @@ package org.telegram.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.net.Uri;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -73,6 +74,7 @@ public class PociGramStudioActivity extends BaseFragment {
         addAction(context, root, "Приватность и безопасность", "Настройки приватности аккаунта", () -> presentFragment(new PrivacySettingsActivity()));
         addAction(context, root, "Уведомления", "Звуки, исключения и уведомления", () -> presentFragment(new NotificationsSettingsActivity()));
         addAction(context, root, "Исключения уведомлений", "Настроить уведомления для выбранных личных чатов и контактов Telegram", () -> presentFragment(new NotificationsSettingsActivity(true)));
+        addAction(context, root, "Special Contacts · Online alerts", "Получать локальное уведомление, когда выбранный контакт появляется в сети", () -> showSpecialContactsDialog(context));
         addAction(context, root, "Быстрая реакция", "Настроить реакцию быстрого двойного нажатия Telegram", () -> presentFragment(new ReactionsDoubleTapManageActivity()));
         addAction(context, root, "Ghost Mode · приватность", "Штатные настройки видимости времени посещения, номера и прочих данных. Полная невидимость Telegram не гарантируется.", () -> presentFragment(new PrivacySettingsActivity()));
         addAction(context, root, "Данные и хранилище", "Управление загрузками, использованием сети и локальным хранилищем", () -> presentFragment(new DataSettingsActivity()));
@@ -240,6 +242,79 @@ public class PociGramStudioActivity extends BaseFragment {
 
     private android.content.SharedPreferences getStudioPreferences() {
         return ApplicationLoader.applicationContext.getSharedPreferences("pocigram_settings", Context.MODE_PRIVATE);
+    }
+
+    private void showSpecialContactsDialog(Context context) {
+        java.util.Set<String> ids = PociGramSpecialContactsManager.getInstance().getUserIds();
+        StringBuilder message = new StringBuilder();
+        if (ids.isEmpty()) {
+            message.append("Список пуст. Добавь контакты Telegram, чтобы получать уведомления об их появлении в сети.");
+        } else {
+            message.append("Отслеживаемые контакты:\n");
+            for (String value : ids) {
+                try {
+                    long userId = Long.parseLong(value);
+                    org.telegram.tgnet.TLRPC.User user = org.telegram.messenger.MessagesController.getInstance(org.telegram.messenger.UserConfig.selectedAccount).getUser(userId);
+                    String name = user == null ? "ID " + value : org.telegram.messenger.ContactsController.formatName(user.first_name, user.last_name);
+                    message.append("• ").append(name).append('\n');
+                } catch (Exception ignored) {
+                }
+            }
+            message.append("\nУведомления приходят при переходе контакта из офлайна в онлайн. Нужны разрешения Android на уведомления.");
+        }
+        new org.telegram.ui.ActionBar.AlertDialog.Builder(context)
+                .setTitle("Special Contacts")
+                .setMessage(message.toString())
+                .setPositiveButton("Добавить контакт", (dialog, which) -> openSpecialContactPicker())
+                .setNeutralButton("Удалить из списка", (dialog, which) -> showSpecialContactRemovalDialog(context))
+                .setNegativeButton("Закрыть", null)
+                .show();
+    }
+
+    private void openSpecialContactPicker() {
+        Bundle args = new Bundle();
+        args.putBoolean("onlyUsers", true);
+        args.putBoolean("destroyAfterSelect", true);
+        args.putBoolean("returnAsResult", true);
+        args.putBoolean("allowSelf", false);
+        args.putBoolean("allowBots", false);
+        args.putBoolean("needPhonebook", false);
+        ContactsActivity picker = new ContactsActivity(args);
+        picker.setDelegate((user, param, activity) -> {
+            PociGramSpecialContactsManager.getInstance().addUser(user.id);
+            android.widget.Toast.makeText(getParentActivity(), "Контакт добавлен в Special Contacts", android.widget.Toast.LENGTH_SHORT).show();
+        });
+        presentFragment(picker);
+    }
+
+    private void showSpecialContactRemovalDialog(Context context) {
+        java.util.ArrayList<String> ids = new java.util.ArrayList<>(PociGramSpecialContactsManager.getInstance().getUserIds());
+        if (ids.isEmpty()) {
+            android.widget.Toast.makeText(context, "Список контактов пуст", android.widget.Toast.LENGTH_SHORT).show();
+            return;
+        }
+        CharSequence[] names = new CharSequence[ids.size()];
+        for (int i = 0; i < ids.size(); i++) {
+            String value = ids.get(i);
+            String name = "ID " + value;
+            try {
+                long userId = Long.parseLong(value);
+                org.telegram.tgnet.TLRPC.User user = org.telegram.messenger.MessagesController.getInstance(org.telegram.messenger.UserConfig.selectedAccount).getUser(userId);
+                if (user != null) {
+                    name = org.telegram.messenger.ContactsController.formatName(user.first_name, user.last_name);
+                }
+            } catch (Exception ignored) {
+            }
+            names[i] = name;
+        }
+        new org.telegram.ui.ActionBar.AlertDialog.Builder(context)
+                .setTitle("Удалить контакт")
+                .setItems(names, (dialog, which) -> {
+                    PociGramSpecialContactsManager.getInstance().removeUser(ids.get(which));
+                    android.widget.Toast.makeText(context, "Контакт удалён", android.widget.Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Отмена", null)
+                .show();
     }
 
     private void showLocalProfileHideDialog(Context context) {
