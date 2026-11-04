@@ -15,6 +15,10 @@ name: Pocigram Android Build
       - 'gradle.properties'
       - 'buildSrc/**'
 
+concurrency:
+  group: pocigram-android-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
