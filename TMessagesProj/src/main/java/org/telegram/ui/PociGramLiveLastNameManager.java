@@ -9,6 +9,7 @@ import org.telegram.messenger.FileLog;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.UserConfig;
+import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.tgnet.tl.TL_account;
 
@@ -108,7 +109,7 @@ public final class PociGramLiveLastNameManager {
         request.flags |= 2;
         request.last_name = newName;
         requestInFlight = true;
-        MessagesController.getInstance(account).getConnectionsManager().sendRequest(request, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
+        ConnectionsManager.getInstance(account).sendRequest(request, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
             requestInFlight = false;
             if (error != null) {
                 FileLog.e("PociGram Live Last Name update failed: " + error.text);
