@@ -8,6 +8,8 @@
 
 package org.telegram.ui.Cells;
 
+import org.telegram.ui.PociGramLocalMessageEdits;
+
 import static org.telegram.messenger.AndroidUtilities.dp;
 import static org.telegram.messenger.AndroidUtilities.dpf2;
 import static org.telegram.messenger.AndroidUtilities.find;
