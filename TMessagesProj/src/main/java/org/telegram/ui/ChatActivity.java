@@ -1223,6 +1223,7 @@ public class ChatActivity extends BaseFragment implements
     public final static int OPTION_SAVE_TO_DOWNLOADS_OR_MUSIC = 10;
     public final static int OPTION_ADD_TO_GIFS = 11;
     public final static int OPTION_EDIT = 12;
+    public final static int OPTION_LOCAL_EDIT = 117;
     public final static int OPTION_PIN = 13;
     public final static int OPTION_UNPIN = 14;
     public final static int OPTION_ADD_CONTACT = 15;
@@ -33600,6 +33601,43 @@ public class ChatActivity extends BaseFragment implements
         MediaController.saveFile(path, getParentActivity(), messageObject.isVideo() ? 1 : 0, null, null);
     }
 
+    private void showLocalMessageEditor() {
+        final MessageObject target = selectedObject;
+        if (target == null || target.type != MessageObject.TYPE_TEXT || target.messageText == null || getContext() == null) {
+            return;
+        }
+        android.widget.EditText editor = new android.widget.EditText(getContext());
+        editor.setSingleLine(false);
+        editor.setMinLines(3);
+        editor.setMaxLines(8);
+        editor.setGravity(android.view.Gravity.TOP | android.view.Gravity.LEFT);
+        editor.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE | android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        editor.setText(target.messageText);
+        android.widget.LinearLayout container = new android.widget.LinearLayout(getContext());
+        container.setOrientation(android.widget.LinearLayout.VERTICAL);
+        container.setPadding(AndroidUtilities.dp(20), AndroidUtilities.dp(8), AndroidUtilities.dp(20), AndroidUtilities.dp(4));
+        container.addView(editor, new android.widget.LinearLayout.LayoutParams(-1, AndroidUtilities.dp(150)));
+        new org.telegram.ui.ActionBar.AlertDialog.Builder(getContext())
+                .setTitle("Локальная правка сообщения")
+                .setMessage("Изменение видно только в этом приложении. Исходное сообщение в Telegram не меняется.")
+                .setView(container)
+                .setPositiveButton("Сохранить локально", (dialog, which) -> {
+                    String value = editor.getText().toString();
+                    if (value.trim().isEmpty() || value.length() > 4096) {
+                        BulletinFactory.of(this).createErrorBulletin("Текст должен содержать от 1 до 4096 символов").show();
+                        return;
+                    }
+                    PociGramLocalMessageEdits.save(target, value);
+                    updateVisibleRows();
+                })
+                .setNeutralButton("Сбросить", (dialog, which) -> {
+                    PociGramLocalMessageEdits.clear(target);
+                    updateVisibleRows();
+                })
+                .setNegativeButton("Отмена", null)
+                .show();
+    }
+
     private void processSelectedOption(int option) {
         if (selectedObject == null || getParentActivity() == null) {
             return;
@@ -34077,6 +34115,10 @@ public class ChatActivity extends BaseFragment implements
                 break;
             }
             case OPTION_SUGGESTION_EDIT_MESSAGE:
+            case OPTION_LOCAL_EDIT: {
+                showLocalMessageEditor();
+                break;
+            }
             case OPTION_EDIT: {
                 if (selectedObjectToEditCaption != null) {
                     startEditingMessageObject(selectedObjectToEditCaption, option == OPTION_SUGGESTION_EDIT_MESSAGE);
@@ -46244,6 +46286,11 @@ public class ChatActivity extends BaseFragment implements
                     options.add(OPTION_EDIT);
                     icons.add(R.drawable.msg_edit);
                 }
+                if (selectedObject != null && selectedObject.type == MessageObject.TYPE_TEXT && selectedObject.messageText != null && selectedObject.messageOwner != null && selectedObject.messageOwner.action == null) {
+                    items.add("Локальная правка");
+                    options.add(OPTION_LOCAL_EDIT);
+                    icons.add(R.drawable.msg_edit);
+                }
                 if (ChatObject.isMonoForum(currentChat) && selectedObject.getGroupId() == 0 && selectedObjectGroup == null && message != null && message.messageOwner != null && message.messageOwner.suggested_post == null && message.messageOwner.action == null) {
                     items.add(LocaleController.getString(R.string.EditOfferAdd));
                     options.add(OPTION_SUGGESTION_ADD_OFFER);
@@ -46589,6 +46636,11 @@ public class ChatActivity extends BaseFragment implements
                 if (allowEdit || chatMode == MODE_WELCOME_MESSAGES) {
                     items.add(LocaleController.getString(R.string.Edit));
                     options.add(OPTION_EDIT);
+                    icons.add(R.drawable.msg_edit);
+                }
+                if (selectedObject != null && selectedObject.type == MessageObject.TYPE_TEXT && selectedObject.messageText != null && selectedObject.messageOwner != null && selectedObject.messageOwner.action == null) {
+                    items.add("Локальная правка");
+                    options.add(OPTION_LOCAL_EDIT);
                     icons.add(R.drawable.msg_edit);
                 }
                 if (ChatObject.isMonoForum(currentChat) && selectedObject.getGroupId() == 0 && selectedObjectGroup == null && message != null && message.messageOwner != null && message.messageOwner.suggested_post == null && message.messageOwner.action == null) {
