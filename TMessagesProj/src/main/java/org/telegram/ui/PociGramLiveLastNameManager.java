@@ -36,6 +36,12 @@ public final class PociGramLiveLastNameManager {
         SharedPreferences prefs = preferences();
         String safePrefix = prefix == null ? "" : prefix.trim();
         String safeSuffix = suffix == null ? "" : suffix.trim();
+        if (safePrefix.length() > 24) {
+            safePrefix = safePrefix.substring(0, 24);
+        }
+        if (safeSuffix.length() > 24) {
+            safeSuffix = safeSuffix.substring(0, 24);
+        }
         boolean wasEnabled = prefs.getBoolean("enabled", false);
         if (enabled && !wasEnabled) {
             TLRPC.User currentUser = UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser();
