@@ -40,7 +40,7 @@ public final class PociGramLocalMessageEdits {
         preferences().edit().remove(key(message)).apply();
         CharSequence original = originals.get(message);
         if (original != null) {
-            message.messageText = original;
+            message.setLocalDisplayText(original);
         }
     }
 
@@ -51,7 +51,7 @@ public final class PociGramLocalMessageEdits {
         rememberOriginal(message);
         String replacement = preferences().getString(key(message), null);
         if (replacement != null) {
-            message.messageText = replacement;
+            message.setLocalDisplayText(replacement);
         } else {
             CharSequence original = originals.get(message);
             if (original != null) {
