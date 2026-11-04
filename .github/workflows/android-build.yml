@@ -2,6 +2,9 @@ name: Pocigram Android Build
 
 'on':
   workflow_dispatch:
+  push:
+    branches:
+      - ziggy-dev
 
 concurrency:
   group: pocigram-android-${{ github.ref }}
