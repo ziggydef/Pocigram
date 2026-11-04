@@ -13,7 +13,6 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.messenger.browser.Browser;
 
 public class PociGramStudioActivity extends BaseFragment {
@@ -58,7 +57,7 @@ public class PociGramStudioActivity extends BaseFragment {
         addAction(context, root, "UI Studio · Оформление", "Открыть полный редактор тем Telegram", () -> presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_BASIC)));
         addAction(context, root, "Приватность и безопасность", "Настройки приватности аккаунта", () -> presentFragment(new PrivacySettingsActivity()));
         addAction(context, root, "Уведомления", "Звуки, исключения и уведомления", () -> presentFragment(new NotificationsSettingsActivity()));
-        addAction(context, root, "Исключения уведомлений", "Настроить уведомления для отдельных чатов и контактов", () -> presentFragment(new NotificationsSettingsActivity()));
+        addAction(context, root, "Special Contacts", "Управление исключениями уведомлений для выбранных пользователей и чатов Telegram", () -> presentFragment(new NotificationsSettingsActivity()));
         addAction(context, root, "Quick Reactions", "Настроить реакцию быстрого двойного нажатия", () -> presentFragment(new ReactionsDoubleTapManageActivity()));
         addAction(context, root, "Видимость аккаунта", "Штатные настройки времени посещения, номера телефона и других данных профиля", () -> presentFragment(new PrivacySettingsActivity()));
         addAction(context, root, "Данные и хранилище", "Управление загрузками, использованием сети и локальным хранилищем", () -> presentFragment(new DataSettingsActivity()));
