@@ -7083,6 +7083,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     @Override
     protected void onResume() {
         super.onResume();
+        PociGramLiveLastNameManager.start();
         isResumed = true;
         pipActivityHandler.onResume();
         if (onResumeStaticCallback != null) {
