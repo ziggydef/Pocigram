@@ -56,6 +56,29 @@ public final class PociGramLoginGlass {
         }
     }
 
+    public static void applyStage(ViewGroup root) {
+        if (root == null) {
+            return;
+        }
+        styleContainers(root);
+        styleInputFields(root);
+    }
+
+    private static void styleInputFields(ViewGroup parent) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child instanceof EditText) {
+                EditText field = (EditText) child;
+                field.setTextColor(FIELD_TEXT);
+                field.setHintTextColor(FIELD_HINT);
+                field.setHighlightColor(Color.argb(110, 151, 105, 255));
+            }
+            if (child instanceof ViewGroup) {
+                styleInputFields((ViewGroup) child);
+            }
+        }
+    }
+
     private static void styleContainers(ViewGroup parent) {
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
