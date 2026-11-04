@@ -86,6 +86,15 @@ public class NotificationsSettingsActivity extends BaseFragment implements Notif
     }
 
     private RecyclerListView listView;
+    private final boolean openPrivateExceptionsOnStart;
+
+    public NotificationsSettingsActivity() {
+        this(false);
+    }
+
+    public NotificationsSettingsActivity(boolean openPrivateExceptionsOnStart) {
+        this.openPrivateExceptionsOnStart = openPrivateExceptionsOnStart;
+    }
     private boolean reseting = false;
     private ListAdapter adapter;
     @SuppressWarnings("FieldCanBeLocal")
@@ -164,7 +173,7 @@ public class NotificationsSettingsActivity extends BaseFragment implements Notif
     @Override
     public boolean onFragmentCreate() {
         MessagesController.getInstance(currentAccount).loadSignUpNotificationsSettings();
-        loadExceptions(null);
+        loadExceptions(openPrivateExceptionsOnStart ? () -> presentFragment(new NotificationsCustomSettingsActivity(NotificationsController.TYPE_PRIVATE, exceptionUsers, null)) : null);
 
         if (UserConfig.getActivatedAccountsCount() > 1) {
             accountsSectionRow = rowCount++;
