@@ -61,6 +61,7 @@ public class PociGramStudioActivity extends BaseFragment {
         addAction(context, root, "UI Studio · Ziggy Glass", "Чёрный интерфейс с фиолетовым стеклянным акцентом", () -> applyUiPreset(0));
         addAction(context, root, "UI Studio · Obsidian", "Графитовый интерфейс и приглушённые сообщения", () -> applyUiPreset(1));
         addAction(context, root, "UI Studio · Сброс", "Вернуть стандартные цвета текущей темы", () -> applyUiPreset(2));
+        addAction(context, root, "Bubble Studio · Прозрачность", "Выбрать уровень прозрачности исходящих сообщений", () -> showBubbleOpacityOptions(context));
         addAction(context, root, "Bubble Studio · Glass Violet", "Полупрозрачный фиолетовый стиль исходящих сообщений", () -> applyBubblePreset(Color.argb(210, 76, 48, 112), false));
         addAction(context, root, "Bubble Studio · Obsidian", "Тёмный графитовый стиль исходящих сообщений", () -> applyBubblePreset(Color.argb(220, 35, 31, 45), false));
         addAction(context, root, "Bubble Studio · Сброс", "Вернуть цвета пузырей из текущей темы", () -> applyBubblePreset(0, true));
@@ -163,6 +164,26 @@ public class PociGramStudioActivity extends BaseFragment {
             Theme.setColor(Theme.key_progressCircle, 0, true);
         }
         getStudioPreferences().edit().putInt("ui_preset", preset).apply();
+        Theme.saveCurrentTheme(Theme.getCurrentTheme(), false, false, false);
+        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.didSetNewTheme, false, false);
+    }
+
+    private void showBubbleOpacityOptions(Context context) {
+        CharSequence[] options = {"35%", "50%", "65%", "80%", "100%"};
+        int[] alphaValues = {89, 128, 166, 204, 255};
+        new org.telegram.ui.ActionBar.AlertDialog.Builder(context)
+                .setTitle("Прозрачность пузырей")
+                .setItems(options, (dialog, which) -> applyBubbleColor(Color.argb(alphaValues[which], 76, 48, 112)))
+                .setNegativeButton("Отмена", null)
+                .show();
+    }
+
+    private void applyBubbleColor(int color) {
+        Theme.setColor(Theme.key_chat_outBubble, color, false);
+        Theme.setColor(Theme.key_chat_outBubbleGradient1, color, false);
+        Theme.setColor(Theme.key_chat_outBubbleGradient2, color, false);
+        Theme.setColor(Theme.key_chat_outBubbleGradient3, color, false);
+        getStudioPreferences().edit().putInt("bubble_color", color).apply();
         Theme.saveCurrentTheme(Theme.getCurrentTheme(), false, false, false);
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.didSetNewTheme, false, false);
     }
