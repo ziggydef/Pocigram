@@ -6,6 +6,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -23,10 +24,16 @@ public class PociGramStudioActivity extends BaseFragment {
         actionBar.setAllowOverlayTitle(true);
         actionBar.setTitle("PociGram Studio");
 
+        ScrollView scrollView = new ScrollView(context);
+        scrollView.setFillViewport(true);
+        scrollView.setClipToPadding(false);
+        scrollView.setBackgroundColor(Color.rgb(9, 8, 15));
+
         LinearLayout root = new LinearLayout(context);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(AndroidUtilities.dp(20), AndroidUtilities.dp(22), AndroidUtilities.dp(20), AndroidUtilities.dp(24));
         root.setBackgroundColor(Color.rgb(9, 8, 15));
+        scrollView.addView(root, new ScrollView.LayoutParams(-1, -2));
 
         TextView intro = new TextView(context);
         intro.setText("Персонализация PociGram");
@@ -51,21 +58,21 @@ public class PociGramStudioActivity extends BaseFragment {
         addAction(context, root, "UI Studio · Оформление", "Открыть полный редактор тем Telegram", () -> presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_BASIC)));
         addAction(context, root, "Приватность и безопасность", "Настройки приватности аккаунта", () -> presentFragment(new PrivacySettingsActivity()));
         addAction(context, root, "Уведомления", "Звуки, исключения и уведомления", () -> presentFragment(new NotificationsSettingsActivity()));
-        addAction(context, root, "Special Contacts", "Открыть исключения уведомлений для отдельных чатов", () -> presentFragment(new NotificationsSettingsActivity()));
+        addAction(context, root, "Исключения уведомлений", "Настроить уведомления для отдельных чатов и контактов", () -> presentFragment(new NotificationsSettingsActivity()));
         addAction(context, root, "Quick Reactions", "Настроить реакцию быстрого двойного нажатия", () -> presentFragment(new ReactionsDoubleTapManageActivity()));
-        addAction(context, root, "Ghost Mode · настройки", "Настроить видимость времени посещения и другие доступные параметры приватности", () -> presentFragment(new PrivacySettingsActivity()));
-        addAction(context, root, "Резервные копии и данные", "Открыть штатные настройки хранения и экспорта данных Telegram", () -> presentFragment(new DataSettingsActivity()));
-        addAction(context, root, "Профиль аккаунта", "Открыть локальные настройки профиля Telegram", () -> presentFragment(new UserInfoActivity()));
+        addAction(context, root, "Видимость аккаунта", "Штатные настройки времени посещения, номера телефона и других данных профиля", () -> presentFragment(new PrivacySettingsActivity()));
+        addAction(context, root, "Данные и хранилище", "Управление загрузками, использованием сети и локальным хранилищем", () -> presentFragment(new DataSettingsActivity()));
+        addAction(context, root, "Профиль аккаунта", "Изменить имя, фамилию и другие доступные данные профиля", () -> presentFragment(new UserInfoActivity()));
         addAction(context, root, "Проверить обновления", "Открыть официальный список релизов PociGram", () -> Browser.openUrl(context, "https://github.com/ziggydef/Pocigram/releases"));
 
         TextView note = new TextView(context);
-        note.setText("Некоторые функции зависят от серверных ограничений Telegram. PociGram не подменяет статусы аккаунта и не обходит защиту приватного контента.");
+        note.setText("PociGram · разработано ziGGy\nЧасть параметров управляется Telegram и зависит от ограничений платформы.");
         note.setTextColor(Color.rgb(135, 125, 153));
         note.setTextSize(12);
         note.setPadding(AndroidUtilities.dp(4), AndroidUtilities.dp(18), AndroidUtilities.dp(4), 0);
         root.addView(note, new LinearLayout.LayoutParams(-1, -2));
 
-        fragmentView = root;
+        fragmentView = scrollView;
         return fragmentView;
     }
 
