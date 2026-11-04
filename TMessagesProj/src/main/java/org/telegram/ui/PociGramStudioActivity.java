@@ -77,6 +77,7 @@ public class PociGramStudioActivity extends BaseFragment {
         addAction(context, root, "Ghost Mode · приватность", "Штатные настройки видимости времени посещения, номера и прочих данных. Полная невидимость Telegram не гарантируется.", () -> presentFragment(new PrivacySettingsActivity()));
         addAction(context, root, "Данные и хранилище", "Управление загрузками, использованием сети и локальным хранилищем", () -> presentFragment(new DataSettingsActivity()));
         addAction(context, root, "Профиль аккаунта", "Изменить имя, фамилию и другие доступные данные профиля", () -> presentFragment(new UserInfoActivity()));
+        addAction(context, root, "Auto Reactions", "Автоматически ставить выбранную реакцию на новые входящие сообщения", () -> showAutoReactionDialog(context));
         addAction(context, root, "Live Last Name", "Обновлять фамилию временем каждые 60 секунд, пока приложение работает", () -> showLiveLastNameDialog(context));
         addAction(context, root, "Резервная копия оформления", "Экспортировать или восстановить пресеты PociGram Studio в JSON", () -> showBackupOptions(context));
         addAction(context, root, "Проверить обновления", "Открыть официальный список релизов PociGram", () -> Browser.openUrl(context, "https://github.com/ziggydef/Pocigram/releases"));
@@ -238,6 +239,39 @@ public class PociGramStudioActivity extends BaseFragment {
 
     private android.content.SharedPreferences getStudioPreferences() {
         return ApplicationLoader.applicationContext.getSharedPreferences("pocigram_settings", Context.MODE_PRIVATE);
+    }
+
+    private void showAutoReactionDialog(Context context) {
+        PociGramAutoReactionManager manager = PociGramAutoReactionManager.getInstance();
+        LinearLayout content = new LinearLayout(context);
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setPadding(AndroidUtilities.dp(22), AndroidUtilities.dp(10), AndroidUtilities.dp(22), AndroidUtilities.dp(6));
+
+        EditText emoji = new EditText(context);
+        emoji.setSingleLine(true);
+        emoji.setHint("Один эмодзи, например ❤️");
+        emoji.setText(manager.getEmoji());
+        content.addView(emoji, new LinearLayout.LayoutParams(-1, AndroidUtilities.dp(48)));
+
+        CheckBox enabled = new CheckBox(context);
+        enabled.setText("Включить автоматические реакции");
+        enabled.setChecked(manager.isEnabled());
+        content.addView(enabled, new LinearLayout.LayoutParams(-1, -2));
+
+        new org.telegram.ui.ActionBar.AlertDialog.Builder(context)
+                .setTitle("Auto Reactions")
+                .setMessage("PociGram будет добавлять выбранную реакцию к новым входящим сообщениям. Не более одной реакции за 5 секунд. Настройка действует только на этом устройстве и использует обычный API Telegram.")
+                .setView(content)
+                .setPositiveButton("Сохранить", (dialog, which) -> {
+                    String value = emoji.getText().toString().trim();
+                    if (value.isEmpty() || value.length() > 8) {
+                        Toast.makeText(context, "Укажи один эмодзи", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    manager.configure(enabled.isChecked(), value);
+                })
+                .setNegativeButton("Отмена", null)
+                .show();
     }
 
     private void showLiveLastNameDialog(Context context) {
