@@ -177,6 +177,90 @@ public class PociGramStudioActivity extends BaseFragment {
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.didSetNewTheme, false, false);
     }
 
+
+    private android.content.SharedPreferences getStudioPreferences() {
+        return ApplicationLoader.applicationContext.getSharedPreferences("pocigram_settings", Context.MODE_PRIVATE);
+    }
+
+    private void showBackupOptions(Context context) {
+        new org.telegram.ui.ActionBar.AlertDialog.Builder(context)
+                .setTitle("Резервная копия оформления")
+                .setMessage("Экспортируются только пресеты оформления PociGram Studio. Данные аккаунта, чаты и пароли не включаются.")
+                .setPositiveButton("Экспорт", (dialog, which) -> {
+                    Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("application/json");
+                    intent.putExtra(Intent.EXTRA_TITLE, "pocigram-studio-backup.json");
+                    startActivityForResult(intent, 7401);
+                })
+                .setNegativeButton("Импорт", (dialog, which) -> {
+                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("application/json");
+                    startActivityForResult(intent, 7402);
+                })
+                .setNeutralButton("Отмена", null)
+                .show();
+    }
+
+    @Override
+    public void onActivityResultFragment(int requestCode, int resultCode, Intent data) {
+        super.onActivityResultFragment(requestCode, resultCode, data);
+        if (resultCode != android.app.Activity.RESULT_OK || data == null || data.getData() == null) {
+            return;
+        }
+        Uri uri = data.getData();
+        try {
+            if (requestCode == 7401) {
+                JSONObject backup = new JSONObject();
+                backup.put("format", "pocigram-studio");
+                backup.put("version", 1);
+                backup.put("ui_preset", getStudioPreferences().getInt("ui_preset", -1));
+                backup.put("bubble_color", getStudioPreferences().getInt("bubble_color", 0));
+                try (OutputStream output = ApplicationLoader.applicationContext.getContentResolver().openOutputStream(uri)) {
+                    if (output == null) {
+                        throw new IllegalStateException("Не удалось открыть файл для записи");
+                    }
+                    output.write(backup.toString(2).getBytes(StandardCharsets.UTF_8));
+                    output.flush();
+                }
+                Toast.makeText(getParentActivity(), "Резервная копия сохранена", Toast.LENGTH_SHORT).show();
+            } else if (requestCode == 7402) {
+                StringBuilder json = new StringBuilder();
+                try (InputStream input = ApplicationLoader.applicationContext.getContentResolver().openInputStream(uri)) {
+                    if (input == null) {
+                        throw new IllegalStateException("Не удалось открыть файл");
+                    }
+                    byte[] buffer = new byte[4096];
+                    int count;
+                    while ((count = input.read(buffer)) != -1) {
+                        if (json.length() + count > 65536) {
+                            throw new IllegalArgumentException("Файл слишком большой");
+                        }
+                        json.append(new String(buffer, 0, count, StandardCharsets.UTF_8));
+                    }
+                }
+                JSONObject backup = new JSONObject(json.toString());
+                if (!"pocigram-studio".equals(backup.optString("format")) || backup.optInt("version", -1) != 1) {
+                    throw new IllegalArgumentException("Неподдерживаемый формат резервной копии");
+                }
+                int uiPreset = backup.optInt("ui_preset", -1);
+                int bubbleColor = backup.optInt("bubble_color", 0);
+                if (uiPreset < -1 || uiPreset > 2) {
+                    throw new IllegalArgumentException("Некорректный пресет оформления");
+                }
+                getStudioPreferences().edit().putInt("ui_preset", uiPreset).putInt("bubble_color", bubbleColor).apply();
+                if (uiPreset >= 0) {
+                    applyUiPreset(uiPreset);
+                }
+                applyBubblePreset(bubbleColor, bubbleColor == 0);
+                Toast.makeText(getParentActivity(), "Оформление восстановлено", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(getParentActivity(), "Ошибка резервной копии: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
     private void addAction(Context context, LinearLayout root, String title, String description, Runnable action) {
         LinearLayout card = new LinearLayout(context);
         card.setOrientation(LinearLayout.VERTICAL);
