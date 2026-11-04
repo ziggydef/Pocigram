@@ -6836,6 +6836,13 @@ public class MessageObject {
         }
     }
 
+    public void setLocalDisplayText(CharSequence text) {
+        if (!TextUtils.equals(messageText, text)) {
+            messageText = text;
+            layoutCreated = false;
+        }
+    }
+
     public boolean checkLayout() {
         if (type != TYPE_TEXT && type != TYPE_EMOJIS && type != TYPE_ARTICLE || messageOwner.peer_id == null || messageText == null || messageText.length() == 0 && !isBotPendingDraft) {
             return false;
