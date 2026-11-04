@@ -6775,6 +6775,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             currentMessageObject = null;
         }
         messageObject.isOutOwnerCached = null;
+        PociGramLocalMessageEdits.apply(messageObject);
         boolean widthChanged = lastWidth != getParentWidth();
         lastHeight = AndroidUtilities.displaySize.y;
         lastWidth = getParentWidth();
