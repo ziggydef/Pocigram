@@ -7087,6 +7087,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         super.onResume();
         PociGramLiveLastNameManager.start();
         PociGramAutoReactionManager.getInstance().start();
+        PociGramSpecialContactsManager.getInstance().start();
         isResumed = true;
         pipActivityHandler.onResume();
         if (onResumeStaticCallback != null) {
