@@ -78,6 +78,7 @@ public class PociGramStudioActivity extends BaseFragment {
         addAction(context, root, "Данные и хранилище", "Управление загрузками, использованием сети и локальным хранилищем", () -> presentFragment(new DataSettingsActivity()));
         addAction(context, root, "Профиль аккаунта", "Изменить имя, фамилию и другие доступные данные профиля", () -> presentFragment(new UserInfoActivity()));
         addAction(context, root, "Auto Reactions", "Автоматически ставить выбранную реакцию на новые входящие сообщения", () -> showAutoReactionDialog(context));
+        addAction(context, root, "Local Profile Hide", "Скрыть номер телефона в собственном профиле только на этом устройстве", () -> showLocalProfileHideDialog(context));
         addAction(context, root, "Live Last Name", "Обновлять фамилию временем каждые 60 секунд, пока приложение работает", () -> showLiveLastNameDialog(context));
         addAction(context, root, "Резервная копия оформления", "Экспортировать или восстановить пресеты PociGram Studio в JSON", () -> showBackupOptions(context));
         addAction(context, root, "Проверить обновления", "Открыть официальный список релизов PociGram", () -> Browser.openUrl(context, "https://github.com/ziggydef/Pocigram/releases"));
@@ -239,6 +240,20 @@ public class PociGramStudioActivity extends BaseFragment {
 
     private android.content.SharedPreferences getStudioPreferences() {
         return ApplicationLoader.applicationContext.getSharedPreferences("pocigram_settings", Context.MODE_PRIVATE);
+    }
+
+    private void showLocalProfileHideDialog(Context context) {
+        android.content.SharedPreferences prefs = ApplicationLoader.applicationContext.getSharedPreferences("pocigram_local_profile", Context.MODE_PRIVATE);
+        CheckBox hidePhone = new CheckBox(context);
+        hidePhone.setText("Скрывать номер телефона в моём профиле на этом устройстве");
+        hidePhone.setChecked(prefs.getBoolean("hide_own_phone", false));
+        new org.telegram.ui.ActionBar.AlertDialog.Builder(context)
+                .setTitle("Local Profile Hide")
+                .setMessage("Это только локальное скрытие строки номера в твоём профиле PociGram. Оно не меняет настройки приватности Telegram и не скрывает номер от других пользователей. Перезапусти экран профиля после изменения.")
+                .setView(hidePhone)
+                .setPositiveButton("Сохранить", (dialog, which) -> prefs.edit().putBoolean("hide_own_phone", hidePhone.isChecked()).apply())
+                .setNegativeButton("Отмена", null)
+                .show();
     }
 
     private void showAutoReactionDialog(Context context) {
