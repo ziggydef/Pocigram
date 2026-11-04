@@ -34115,10 +34115,6 @@ public class ChatActivity extends BaseFragment implements
                 break;
             }
             case OPTION_SUGGESTION_EDIT_MESSAGE:
-            case OPTION_LOCAL_EDIT: {
-                showLocalMessageEditor();
-                break;
-            }
             case OPTION_EDIT: {
                 if (selectedObjectToEditCaption != null) {
                     startEditingMessageObject(selectedObjectToEditCaption, option == OPTION_SUGGESTION_EDIT_MESSAGE);
@@ -34128,6 +34124,10 @@ public class ChatActivity extends BaseFragment implements
                 selectedObject = null;
                 selectedObjectGroup = null;
                 selectedObjectToEditCaption = null;
+                break;
+            }
+            case OPTION_LOCAL_EDIT: {
+                showLocalMessageEditor();
                 break;
             }
             case OPTION_EDIT_PRICE: {
