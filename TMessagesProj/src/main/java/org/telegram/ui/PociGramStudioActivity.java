@@ -81,6 +81,7 @@ public class PociGramStudioActivity extends BaseFragment {
         addAction(context, root, "Профиль аккаунта", "Изменить имя, фамилию и другие доступные данные профиля", () -> presentFragment(new UserInfoActivity()));
         addAction(context, root, "Auto Reactions", "Автоматически ставить выбранную реакцию на новые входящие сообщения", () -> showAutoReactionDialog(context));
         addAction(context, root, "Local Profile Hide", "Скрыть номер телефона в собственном профиле только на этом устройстве", () -> showLocalProfileHideDialog(context));
+        addAction(context, root, "Message Editor", "Локально изменить отображаемый текст сообщения через долгое нажатие", () -> showLocalMessageEditorInfo(context));
         addAction(context, root, "Live Last Name", "Обновлять фамилию временем каждые 60 секунд, пока приложение работает", () -> showLiveLastNameDialog(context));
         addAction(context, root, "Резервная копия оформления", "Экспортировать или восстановить пресеты PociGram Studio в JSON", () -> showBackupOptions(context));
         addAction(context, root, "Проверить обновления", "Открыть официальный список релизов PociGram", () -> Browser.openUrl(context, "https://github.com/ziggydef/Pocigram/releases"));
@@ -314,6 +315,14 @@ public class PociGramStudioActivity extends BaseFragment {
                     android.widget.Toast.makeText(context, "Контакт удалён", android.widget.Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Отмена", null)
+                .show();
+    }
+
+    private void showLocalMessageEditorInfo(Context context) {
+        new org.telegram.ui.ActionBar.AlertDialog.Builder(context)
+                .setTitle("Message Editor")
+                .setMessage("Открой чат, зажми текстовое сообщение и выбери «Локальная правка». Изменённый текст сохраняется только на этом устройстве. Для возврата исходного отображения открой редактор и нажми «Сбросить». Серверное сообщение не изменяется.")
+                .setPositiveButton("Понятно", null)
                 .show();
     }
 
