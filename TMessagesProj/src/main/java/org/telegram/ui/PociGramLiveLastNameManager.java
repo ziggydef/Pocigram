@@ -51,9 +51,12 @@ public final class PociGramLiveLastNameManager {
                 .putBoolean("enabled", enabled)
                 .apply();
 
-        if (!enabled && wasEnabled) {
-            restoreOriginalName();
-        } else if (enabled && running) {
+        if (!enabled) {
+            stop();
+            if (wasEnabled) {
+                restoreOriginalName();
+            }
+        } else if (running) {
             updateNow();
         }
     }
