@@ -26,15 +26,7 @@ public final class PociGramLoginGlass {
             return;
         }
 
-        GradientDrawable background = new GradientDrawable(
-                GradientDrawable.Orientation.TL_BR,
-                new int[]{
-                        Color.rgb(8, 7, 14),
-                        Color.rgb(17, 10, 29),
-                        Color.rgb(7, 7, 12)
-                }
-        );
-        root.setBackground(background);
+        root.setBackground(createBackground());
         root.setClipToPadding(false);
 
         styleContainers(root);
@@ -60,8 +52,21 @@ public final class PociGramLoginGlass {
         if (root == null) {
             return;
         }
+        root.setBackground(createBackground());
+        root.setClipToPadding(false);
         styleContainers(root);
         styleInputFields(root);
+    }
+
+    private static GradientDrawable createBackground() {
+        return new GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
+                new int[]{
+                        Color.rgb(8, 7, 14),
+                        Color.rgb(17, 10, 29),
+                        Color.rgb(7, 7, 12)
+                }
+        );
     }
 
     private static void styleInputFields(ViewGroup parent) {
