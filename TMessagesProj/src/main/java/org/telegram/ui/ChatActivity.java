@@ -1223,7 +1223,7 @@ public class ChatActivity extends BaseFragment implements
     public final static int OPTION_SAVE_TO_DOWNLOADS_OR_MUSIC = 10;
     public final static int OPTION_ADD_TO_GIFS = 11;
     public final static int OPTION_EDIT = 12;
-    public final static int OPTION_LOCAL_EDIT = 117;
+    public final static int OPTION_LOCAL_EDIT = 118;
     public final static int OPTION_PIN = 13;
     public final static int OPTION_UNPIN = 14;
     public final static int OPTION_ADD_CONTACT = 15;
