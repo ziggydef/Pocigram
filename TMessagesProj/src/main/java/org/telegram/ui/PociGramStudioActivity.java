@@ -8,6 +8,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.EditText;
+import android.widget.CheckBox;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -75,6 +77,7 @@ public class PociGramStudioActivity extends BaseFragment {
         addAction(context, root, "Ghost Mode · приватность", "Штатные настройки видимости времени посещения, номера и прочих данных. Полная невидимость Telegram не гарантируется.", () -> presentFragment(new PrivacySettingsActivity()));
         addAction(context, root, "Данные и хранилище", "Управление загрузками, использованием сети и локальным хранилищем", () -> presentFragment(new DataSettingsActivity()));
         addAction(context, root, "Профиль аккаунта", "Изменить имя, фамилию и другие доступные данные профиля", () -> presentFragment(new UserInfoActivity()));
+        addAction(context, root, "Live Last Name", "Обновлять фамилию временем каждые 60 секунд, пока приложение работает", () -> showLiveLastNameDialog(context));
         addAction(context, root, "Резервная копия оформления", "Экспортировать или восстановить пресеты PociGram Studio в JSON", () -> showBackupOptions(context));
         addAction(context, root, "Проверить обновления", "Открыть официальный список релизов PociGram", () -> Browser.openUrl(context, "https://github.com/ziggydef/Pocigram/releases"));
 
@@ -235,6 +238,41 @@ public class PociGramStudioActivity extends BaseFragment {
 
     private android.content.SharedPreferences getStudioPreferences() {
         return ApplicationLoader.applicationContext.getSharedPreferences("pocigram_settings", Context.MODE_PRIVATE);
+    }
+
+    private void showLiveLastNameDialog(Context context) {
+        android.content.SharedPreferences prefs = ApplicationLoader.applicationContext.getSharedPreferences("pocigram_live_last_name", Context.MODE_PRIVATE);
+        LinearLayout content = new LinearLayout(context);
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setPadding(AndroidUtilities.dp(22), AndroidUtilities.dp(10), AndroidUtilities.dp(22), AndroidUtilities.dp(6));
+
+        EditText prefix = new EditText(context);
+        prefix.setSingleLine(true);
+        prefix.setHint("Текст перед временем");
+        prefix.setText(prefs.getString("prefix", ""));
+        content.addView(prefix, new LinearLayout.LayoutParams(-1, AndroidUtilities.dp(48)));
+
+        EditText suffix = new EditText(context);
+        suffix.setSingleLine(true);
+        suffix.setHint("Текст после времени");
+        suffix.setText(prefs.getString("suffix", ""));
+        content.addView(suffix, new LinearLayout.LayoutParams(-1, AndroidUtilities.dp(48)));
+
+        CheckBox use24Hour = new CheckBox(context);
+        use24Hour.setText("24-часовой формат (HH:mm)");
+        use24Hour.setChecked(prefs.getBoolean("use_24_hour", true));
+        content.addView(use24Hour, new LinearLayout.LayoutParams(-1, -2));
+
+        new org.telegram.ui.ActionBar.AlertDialog.Builder(context)
+                .setTitle("Live Last Name")
+                .setMessage("Фамилия аккаунта будет обновляться на сервере каждую минуту. Изменение видно другим пользователям. При отключении PociGram попробует восстановить исходную фамилию. Обновления выполняются, пока приложение активно.")
+                .setView(content)
+                .setPositiveButton("Включить / сохранить", (dialog, which) ->
+                        PociGramLiveLastNameManager.configure(prefix.getText().toString(), suffix.getText().toString(), use24Hour.isChecked(), true))
+                .setNeutralButton("Отключить и восстановить", (dialog, which) ->
+                        PociGramLiveLastNameManager.configure(prefix.getText().toString(), suffix.getText().toString(), use24Hour.isChecked(), false))
+                .setNegativeButton("Отмена", null)
+                .show();
     }
 
     private void showBackupOptions(Context context) {
