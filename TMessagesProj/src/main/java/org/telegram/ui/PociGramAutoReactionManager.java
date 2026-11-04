@@ -83,6 +83,9 @@ public final class PociGramAutoReactionManager implements NotificationCenter.Not
         if (args[2] instanceof Boolean && (Boolean) args[2]) {
             return;
         }
+        if (args[3] instanceof Integer && (Integer) args[3] != 0) {
+            return;
+        }
         ArrayList<MessageObject> messages = (ArrayList<MessageObject>) args[1];
         if (messages == null || messages.isEmpty()) {
             return;
