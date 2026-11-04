@@ -1,0 +1,91 @@
+package org.telegram.ui;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import org.telegram.messenger.AndroidUtilities;
+import org.telegram.ui.ActionBar.BaseFragment;
+import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.Components.LayoutHelper;
+import org.telegram.messenger.browser.Browser;
+
+public class PociGramStudioActivity extends BaseFragment {
+
+    @Override
+    public View createView(Context context) {
+        actionBar.setBackButtonImage(org.telegram.messenger.R.drawable.ic_ab_back);
+        actionBar.setAllowOverlayTitle(true);
+        actionBar.setTitle("PociGram Studio");
+
+        LinearLayout root = new LinearLayout(context);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setPadding(AndroidUtilities.dp(20), AndroidUtilities.dp(22), AndroidUtilities.dp(20), AndroidUtilities.dp(24));
+        root.setBackgroundColor(Color.rgb(9, 8, 15));
+
+        TextView intro = new TextView(context);
+        intro.setText("Персонализация PociGram");
+        intro.setTextColor(Color.rgb(245, 241, 255));
+        intro.setTextSize(22);
+        intro.setGravity(Gravity.CENTER_VERTICAL);
+        root.addView(intro, new LinearLayout.LayoutParams(-1, AndroidUtilities.dp(48)));
+
+        TextView subtitle = new TextView(context);
+        subtitle.setText("Быстрый доступ к системам оформления, приватности и уведомлений Telegram.");
+        subtitle.setTextColor(Color.rgb(175, 164, 197));
+        subtitle.setTextSize(14);
+        subtitle.setPadding(0, 0, 0, AndroidUtilities.dp(18));
+        root.addView(subtitle, new LinearLayout.LayoutParams(-1, -2));
+
+        addAction(context, root, "Оформление и темы", "Открыть редактор тем Telegram", () -> presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_BASIC)));
+        addAction(context, root, "Приватность и безопасность", "Настройки приватности аккаунта", () -> presentFragment(new PrivacySettingsActivity()));
+        addAction(context, root, "Уведомления", "Звуки, исключения и уведомления", () -> presentFragment(new NotificationsSettingsActivity()));
+        addAction(context, root, "Проверить обновления", "Открыть официальный список релизов PociGram", () -> Browser.openUrl(context, "https://github.com/ziggydef/Pocigram/releases"));
+
+        TextView note = new TextView(context);
+        note.setText("Некоторые функции зависят от серверных ограничений Telegram. PociGram не подменяет статусы аккаунта и не обходит защиту приватного контента.");
+        note.setTextColor(Color.rgb(135, 125, 153));
+        note.setTextSize(12);
+        note.setPadding(AndroidUtilities.dp(4), AndroidUtilities.dp(18), AndroidUtilities.dp(4), 0);
+        root.addView(note, new LinearLayout.LayoutParams(-1, -2));
+
+        fragmentView = root;
+        return fragmentView;
+    }
+
+    private void addAction(Context context, LinearLayout root, String title, String description, Runnable action) {
+        LinearLayout card = new LinearLayout(context);
+        card.setOrientation(LinearLayout.VERTICAL);
+        card.setPadding(AndroidUtilities.dp(16), AndroidUtilities.dp(13), AndroidUtilities.dp(16), AndroidUtilities.dp(13));
+        GradientDrawable background = new GradientDrawable();
+        background.setColor(Color.argb(205, 25, 20, 38));
+        background.setCornerRadius(AndroidUtilities.dp(16));
+        background.setStroke(AndroidUtilities.dp(1), Color.argb(150, 151, 105, 255));
+        card.setBackground(background);
+        card.setClickable(true);
+        card.setFocusable(true);
+
+        TextView titleView = new TextView(context);
+        titleView.setText(title);
+        titleView.setTextColor(Color.rgb(245, 241, 255));
+        titleView.setTextSize(16);
+        card.addView(titleView, new LinearLayout.LayoutParams(-1, -2));
+
+        TextView descriptionView = new TextView(context);
+        descriptionView.setText(description);
+        descriptionView.setTextColor(Color.rgb(165, 153, 190));
+        descriptionView.setTextSize(12);
+        LinearLayout.LayoutParams descriptionParams = new LinearLayout.LayoutParams(-1, -2);
+        descriptionParams.topMargin = AndroidUtilities.dp(4);
+        card.addView(descriptionView, descriptionParams);
+
+        card.setOnClickListener(v -> action.run());
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
+        params.bottomMargin = AndroidUtilities.dp(10);
+        root.addView(card, params);
+    }
+}
