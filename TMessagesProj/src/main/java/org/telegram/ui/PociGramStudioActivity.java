@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.NotificationCenter;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.LayoutHelper;
@@ -41,7 +42,10 @@ public class PociGramStudioActivity extends BaseFragment {
         subtitle.setPadding(0, 0, 0, AndroidUtilities.dp(18));
         root.addView(subtitle, new LinearLayout.LayoutParams(-1, -2));
 
-        addAction(context, root, "Оформление и темы", "Открыть редактор тем Telegram", () -> presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_BASIC)));
+        addAction(context, root, "Bubble Studio · Glass Violet", "Полупрозрачный фиолетовый стиль исходящих сообщений", () -> applyBubblePreset(Color.argb(210, 76, 48, 112), false));
+        addAction(context, root, "Bubble Studio · Obsidian", "Тёмный графитовый стиль исходящих сообщений", () -> applyBubblePreset(Color.argb(220, 35, 31, 45), false));
+        addAction(context, root, "Сбросить стиль пузырей", "Вернуть цвета пузырей из текущей темы", () -> applyBubblePreset(0, true));
+        addAction(context, root, "UI Studio · Оформление", "Открыть полный редактор тем Telegram", () -> presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_BASIC)));
         addAction(context, root, "Приватность и безопасность", "Настройки приватности аккаунта", () -> presentFragment(new PrivacySettingsActivity()));
         addAction(context, root, "Уведомления", "Звуки, исключения и уведомления", () -> presentFragment(new NotificationsSettingsActivity()));
         addAction(context, root, "Проверить обновления", "Открыть официальный список релизов PociGram", () -> Browser.openUrl(context, "https://github.com/ziggydef/Pocigram/releases"));
@@ -55,6 +59,15 @@ public class PociGramStudioActivity extends BaseFragment {
 
         fragmentView = root;
         return fragmentView;
+    }
+
+    private void applyBubblePreset(int color, boolean reset) {
+        Theme.setColor(Theme.key_chat_outBubble, color, reset);
+        Theme.setColor(Theme.key_chat_outBubbleGradient1, color, reset);
+        Theme.setColor(Theme.key_chat_outBubbleGradient2, color, reset);
+        Theme.setColor(Theme.key_chat_outBubbleGradient3, color, reset);
+        Theme.saveCurrentTheme(Theme.getCurrentTheme(), false, false, false);
+        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.didSetNewTheme, false, false);
     }
 
     private void addAction(Context context, LinearLayout root, String title, String description, Runnable action) {
