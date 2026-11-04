@@ -279,8 +279,16 @@ public class PociGramStudioActivity extends BaseFragment {
                 .setView(content)
                 .setPositiveButton("Сохранить", (dialog, which) -> {
                     String value = emoji.getText().toString().trim();
-                    if (value.isEmpty() || value.length() > 8) {
-                        Toast.makeText(context, "Укажи один эмодзи", Toast.LENGTH_SHORT).show();
+                    String[] supported = {"❤️", "👍", "🔥", "😂", "😍", "🎉", "👎"};
+                    boolean valid = false;
+                    for (String item : supported) {
+                        if (item.equals(value)) {
+                            valid = true;
+                            break;
+                        }
+                    }
+                    if (!valid) {
+                        Toast.makeText(context, "Выбери реакцию: ❤️ 👍 🔥 😂 😍 🎉 👎", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     manager.configure(enabled.isChecked(), value);
