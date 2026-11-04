@@ -42,9 +42,12 @@ public class PociGramStudioActivity extends BaseFragment {
         subtitle.setPadding(0, 0, 0, AndroidUtilities.dp(18));
         root.addView(subtitle, new LinearLayout.LayoutParams(-1, -2));
 
+        addAction(context, root, "UI Studio · Ziggy Glass", "Чёрный интерфейс с фиолетовым стеклянным акцентом", () -> applyUiPreset(0));
+        addAction(context, root, "UI Studio · Obsidian", "Графитовый интерфейс и приглушённые сообщения", () -> applyUiPreset(1));
+        addAction(context, root, "UI Studio · Сброс", "Вернуть стандартные цвета текущей темы", () -> applyUiPreset(2));
         addAction(context, root, "Bubble Studio · Glass Violet", "Полупрозрачный фиолетовый стиль исходящих сообщений", () -> applyBubblePreset(Color.argb(210, 76, 48, 112), false));
         addAction(context, root, "Bubble Studio · Obsidian", "Тёмный графитовый стиль исходящих сообщений", () -> applyBubblePreset(Color.argb(220, 35, 31, 45), false));
-        addAction(context, root, "Сбросить стиль пузырей", "Вернуть цвета пузырей из текущей темы", () -> applyBubblePreset(0, true));
+        addAction(context, root, "Bubble Studio · Сброс", "Вернуть цвета пузырей из текущей темы", () -> applyBubblePreset(0, true));
         addAction(context, root, "UI Studio · Оформление", "Открыть полный редактор тем Telegram", () -> presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_BASIC)));
         addAction(context, root, "Приватность и безопасность", "Настройки приватности аккаунта", () -> presentFragment(new PrivacySettingsActivity()));
         addAction(context, root, "Уведомления", "Звуки, исключения и уведомления", () -> presentFragment(new NotificationsSettingsActivity()));
@@ -59,6 +62,40 @@ public class PociGramStudioActivity extends BaseFragment {
 
         fragmentView = root;
         return fragmentView;
+    }
+
+    private void applyUiPreset(int preset) {
+        boolean reset = preset == 2;
+        int background = preset == 0 ? Color.rgb(12, 10, 19) : Color.rgb(17, 17, 22);
+        int surface = preset == 0 ? Color.rgb(24, 19, 35) : Color.rgb(30, 30, 37);
+        int incoming = preset == 0 ? Color.rgb(43, 35, 57) : Color.rgb(43, 43, 50);
+        int outgoing = preset == 0 ? Color.rgb(78, 51, 112) : Color.rgb(58, 55, 67);
+        int accent = preset == 0 ? Color.rgb(151, 105, 255) : Color.rgb(170, 160, 190);
+        if (!reset) {
+            Theme.setColor(Theme.key_windowBackgroundWhite, background, false);
+            Theme.setColor(Theme.key_windowBackgroundGray, surface, false);
+            Theme.setColor(Theme.key_actionBarDefault, background, false);
+            Theme.setColor(Theme.key_actionBarDefaultIcon, accent, false);
+            Theme.setColor(Theme.key_actionBarDefaultTitle, Color.rgb(245, 241, 255), false);
+            Theme.setColor(Theme.key_chat_inBubble, incoming, false);
+            Theme.setColor(Theme.key_chat_outBubble, outgoing, false);
+            Theme.setColor(Theme.key_chat_outBubbleGradient1, outgoing, false);
+            Theme.setColor(Theme.key_chat_outBubbleGradient2, outgoing, false);
+            Theme.setColor(Theme.key_chat_outBubbleGradient3, outgoing, false);
+        } else {
+            Theme.setColor(Theme.key_windowBackgroundWhite, 0, true);
+            Theme.setColor(Theme.key_windowBackgroundGray, 0, true);
+            Theme.setColor(Theme.key_actionBarDefault, 0, true);
+            Theme.setColor(Theme.key_actionBarDefaultIcon, 0, true);
+            Theme.setColor(Theme.key_actionBarDefaultTitle, 0, true);
+            Theme.setColor(Theme.key_chat_inBubble, 0, true);
+            Theme.setColor(Theme.key_chat_outBubble, 0, true);
+            Theme.setColor(Theme.key_chat_outBubbleGradient1, 0, true);
+            Theme.setColor(Theme.key_chat_outBubbleGradient2, 0, true);
+            Theme.setColor(Theme.key_chat_outBubbleGradient3, 0, true);
+        }
+        Theme.saveCurrentTheme(Theme.getCurrentTheme(), false, false, false);
+        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.didSetNewTheme, false, false);
     }
 
     private void applyBubblePreset(int color, boolean reset) {
