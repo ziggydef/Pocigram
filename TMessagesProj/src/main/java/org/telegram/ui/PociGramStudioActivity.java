@@ -169,6 +169,22 @@ public class PociGramStudioActivity extends BaseFragment {
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.didSetNewTheme, false, false);
     }
 
+    private boolean isSupportedBubbleColor(int color) {
+        if (color == 0) {
+            return true;
+        }
+        int red = Color.red(color);
+        int green = Color.green(color);
+        int blue = Color.blue(color);
+        boolean supportedRgb =
+                (red == 76 && green == 48 && blue == 112) ||
+                (red == 35 && green == 31 && blue == 45) ||
+                (red == 53 && green == 51 && blue == 61) ||
+                (red == 34 && green == 55 && blue == 91) ||
+                (red == 89 && green == 39 && blue == 63);
+        return supportedRgb && Color.alpha(color) >= 60;
+    }
+
     private void showBubbleColorOptions(Context context) {
         CharSequence[] names = {"Ziggy Violet", "Obsidian", "Graphite", "Deep Blue", "Burgundy"};
         int[] colors = {
@@ -286,6 +302,9 @@ public class PociGramStudioActivity extends BaseFragment {
                 int bubbleColor = backup.optInt("bubble_color", 0);
                 if (uiPreset < -1 || uiPreset > 2) {
                     throw new IllegalArgumentException("Некорректный пресет оформления");
+                }
+                if (!isSupportedBubbleColor(bubbleColor)) {
+                    throw new IllegalArgumentException("Некорректный цвет пузырей");
                 }
                 getStudioPreferences().edit().putInt("ui_preset", uiPreset).putInt("bubble_color", bubbleColor).apply();
                 if (uiPreset >= 0) {
